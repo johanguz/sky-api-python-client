@@ -1,7 +1,7 @@
 import re
 import os
 import pickle
-
+from datetime import datetime
 
 from .utils import *
 from .httpRequest import *
@@ -486,6 +486,10 @@ class Sky:
         data = self.get("offeringtypes")
         return data.loc[data.description.isin(offeringType), "id"].tolist()
 
+    def get_schedule_meeting(self, start_date: datetime, end_date: datetime, offering_type: int) -> pd.DataFrame:
+        val = self.get(endpoint=f"schedules/meetings?start_date={start_date}&end_date={end_date}&offering_types={offering_type}, raw_data=True")
+        return val
+
     def getAdvancedList(self, list_id: int) -> pd.DataFrame:
         """Gets Advanced list from Core
 
@@ -495,17 +499,7 @@ class Sky:
         Returns:
             A pandas dataframe of the advanced list
         """
-        # Calling api to get raw list data (Updated the URL as of 1/1/23)
-        # raw_list = {}
-        # try:
-        #     raw_list += self.get(endpoint=f"lists/advanced/{list_id}", raw_data=True)
-        # except KeyError:
-        #     print("Fail")
-        # Type casting the data to a dataframe
-
-        # A list to hold all dataframes for queries longer than 1000 rows
         main = []
-        
         # Run through ~100 pages, which will equate to 100,000 rows max
         for i in range(1, 101):
             val = self.get(endpoint=f"lists/advanced/{list_id}?page={i}", raw_data=True)
