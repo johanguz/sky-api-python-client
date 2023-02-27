@@ -487,8 +487,8 @@ class Sky:
         return data.loc[data.description.isin(offeringType), "id"].tolist()
 
     def get_schedule_meeting(self, start_date: datetime, end_date: datetime, offering_type: int) -> pd.DataFrame:
-        val = self.get(endpoint=f"schedules/meetings?start_date={start_date}&end_date={end_date}&offering_types={offering_type}, raw_data=True")
-        return val
+        val = self.get(endpoint=f"schedules/meetings?start_date={start_date}&end_date={end_date}&offering_types={offering_type}", raw_data=True)
+        return pd.DataFrame.from_dict(val['value'])
 
     def get_excused_types(self) -> pd.DataFrame:
         val = self.get(endpoint=f"types/excusedtypes", raw_data=True)
@@ -496,7 +496,7 @@ class Sky:
 
     def get_attendance_record(self, day: datetime, offering_type: int, level_id: int) -> pd.DataFrame:
         val = self.get(endpoint=f"attendance?level_id={level_id}&day={day}&offering_type={offering_type}", raw_data=True)
-        return val
+        return pd.DataFrame.from_dict(val['value'])
 
 
     def getAdvancedList(self, list_id: int) -> pd.DataFrame:
